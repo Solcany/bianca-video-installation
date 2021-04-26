@@ -1,0 +1,22 @@
+{
+  "name": "bianca_p5js_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Solcany/bianca_p5js_project.git"
+  },
+  "author": "ms",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Solcany/bianca_p5js_project/issues"
+  },
+  "scripts": {
+    "dev": "browser-sync start --server --files './*.html, ./js/*.js'"
+  },
+  "homepage": "https://github.com/Solcany/bianca_p5js_project#readme"
+}
