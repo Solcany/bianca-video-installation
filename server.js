@@ -7,7 +7,6 @@ var server = app.listen(4000)
 app.use(express.static('./public/random_video_player'))
 
 var io = socket(server)
-
-io.socket.on('connection', function() {
-
+io.on('connect', function(socket) {
+    socket.send("start")
 })
