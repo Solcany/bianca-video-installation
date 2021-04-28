@@ -16,7 +16,7 @@ function Random_video_player(path, videos) {
             var src = this.path + video_name
             var video_frame = document.createElement('video')
                 video_frame.id = "video_" + i
-                video_frame.setAttribute("data-is-playing", "false")
+                video_frame.setAttribute("data-is-active", "false")
                 video_frame.src = src
                 video_frame.muted = true
             container.appendChild(video_frame)
@@ -50,15 +50,15 @@ function Random_video_player(path, videos) {
         this.prev_video_el = this.active_video_el
         var next_video_index = Math.floor(Math.random() * this.video_frames.length)
         this.active_video_el = this.video_frames[next_video_index]
-        this.active_video_el.setAttribute("data-is-playing", true)
+        this.active_video_el.setAttribute("data-is-active", true)
     }
 
     this.play_next_video = function() {
         // hide the previous video
         if(this.prev_video_el) {
-            this.prev_video_el.setAttribute("data-is-playing", false)
+            this.prev_video_el.setAttribute("data-is-active", false)
         }
-        this.active_video_el.setAttribute("data-is-playing", true)
+        this.active_video_el.setAttribute("data-is-active", true)
         this.active_video_el.play();
     }
 

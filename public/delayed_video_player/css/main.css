@@ -1,0 +1,25 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.video_player_container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.video_player_container video {
+  position: absolute;
+  object-fit: cover;
+  min-width: 100%;
+  min-height: 100%;
+}
+.video_player_container video[data-is-playing=false] {
+  display: none;
+}
+.video_player_container video[data-is-playing=true] {
+  display: block;
+}
+
+/*# sourceMappingURL=main.css.map */
