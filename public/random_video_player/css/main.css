@@ -15,10 +15,10 @@ body {
   min-width: 100%;
   min-height: 100%;
 }
-#random_video_player video[data-is-playing=false] {
+#random_video_player video[data-is-active=false] {
   display: none;
 }
-#random_video_player video[data-is-playing=true] {
+#random_video_player video[data-is-active=true] {
   display: block;
 }
 

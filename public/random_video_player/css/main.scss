@@ -15,10 +15,10 @@ body {
         min-width: 100%;
         min-height: 100%;
 
-        &[data-is-playing="false"] {
+        &[data-is-active="false"] {
             display: none;
         }
-        &[data-is-playing="true"] {
+        &[data-is-active="true"] {
             display: block;
         }
     }

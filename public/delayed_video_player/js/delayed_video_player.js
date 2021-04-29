@@ -3,6 +3,8 @@ function Delayed_video_player(path, video_name, player_num) {
     this.video_name = video_name;
     this.num = player_num
     this.video_el
+    this.clock_el
+    this.clock_container_el
 
     this.create_video_player = function() {
         // create video container
@@ -17,6 +19,23 @@ function Delayed_video_player(path, video_name, player_num) {
         this.video_el = video_el
         container.appendChild(video_el)
         document.body.appendChild(container)
+    }
+
+    this.create_countdown_el = function() {
+        var container_el = document.getElementById("delayed_video_player_" + this.num)
+        var clock_container_el = document.createElement('div')
+        clock_container_el.id = "clock_container"
+        clock_container_el.setAttribute("data-is-active", false);
+
+        var clock_el = document.createElement('span')
+        clock_el.id = "clock"
+        clock_el.innerHTML = _DELAYED_PLAYER_DELAY_ / 1000
+
+        this.clock_el = clock_el;
+        this.clock_container_el = clock_container_el;
+
+        clock_container_el.appendChild(clock_el)
+        container_el.appendChild(clock_container_el)
     }
 
     // this.preload_video = function(video_name) {
@@ -50,33 +69,62 @@ function Delayed_video_player(path, video_name, player_num) {
         this.video_el.play();
     }
 
-    this.measure_time = function() {
-        var startTime;
-        startTime = new Date();
 
-        function end() {
-            var endTime = new Date();
-            var timeDiff = endTime - startTime; //in ms
-            // strip the ms
-            timeDiff /= 1000;
+    this.loop_video_after_delay = function() {
+        this.video_el.play();
 
-            // get seconds
-            var seconds = Math.round(timeDiff);
-            console.log(seconds + " seconds");
+        this.video_el.onended = function() {
+            this.video_el.setAttribute("data-is-active", false)
+            this.clock_container_el.setAttribute("data-is-active", true)
+            this.countdown_clock(new Date(), _DELAYED_PLAYER_DELAY_)
 
             setTimeout(function() {
-                end()
-            }, 1000)
+                this.video_el.setAttribute("data-is-active", true)
+                this.clock_container_el.setAttribute("data-is-active", false)
+                this.video_el.play();
+            }.bind(this), _DELAYED_PLAYER_DELAY_)
+        }.bind(this)
+    }
+
+    // this.measure_time_ = function(start_time, delay, callback) {
+
+    //     var loop = function() {
+    //         var end_time = new Date();
+    //         var time_diff = end_time - start_time;
+
+    //         if(timeDiff < delay) {
+    //             setTimeout(function() {
+    //                 console.log(timeDiff)
+    //                 this.measure_time_(start_time)
+    //             }.bind(this), 1000)
+    //         } else {
+    //             callback();
+    //         }
+    //     }
+    //     loop()
+    // }
+
+    this.countdown_clock = function(start_time, delay) {
+        var end_time = new Date();
+        var time_diff = end_time - start_time;
+
+        if(time_diff < delay) {
+            setTimeout(function() {
+                var countdown = (delay - time_diff) / 1000
+                var seconds = Math.round(countdown);
+                this.clock_el.innerHTML = seconds
+                this.countdown_clock(start_time, delay)
+            }.bind(this), _DELAYED_PLAYER_TIME_CHECK_)
+        } else {
+            this.clock_el.innerHTML = 0
         }
-
-        end();
-
     }
 
     this.init = function() {
         this.create_video_player();
-        this.video_el.play();
-        this.measure_time();
+        this.create_countdown_el();
+        this.loop_video_after_delay();
+        // this.video_el.play();
 
         //this.set_next_video()
     }
