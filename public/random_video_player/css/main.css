@@ -3,22 +3,22 @@ body {
   margin: 0;
 }
 
-#random_video_player {
+.video_player_container {
   position: relative;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
 }
-#random_video_player video {
+.video_player_container video {
   position: absolute;
   object-fit: cover;
   min-width: 100%;
   min-height: 100%;
 }
-#random_video_player video[data-is-active=false] {
+.video_player_container video[data-is-active=false] {
   display: none;
 }
-#random_video_player video[data-is-active=true] {
+.video_player_container video[data-is-active=true] {
   display: block;
 }
 

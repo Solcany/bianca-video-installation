@@ -1,7 +1,7 @@
-function Delayed_video_player(path, video_name, player_num) {
+function Delayed_video_player(path, video_name, num) {
     this.path = path;
     this.video_name = video_name;
-    this.num = player_num
+    this.player_name = "delayed_video_player_" + num
     this.video_el
     this.clock_el
     this.clock_container_el
@@ -9,20 +9,22 @@ function Delayed_video_player(path, video_name, player_num) {
     this.create_video_player = function() {
         // create video container
         var container = document.createElement('div')
-        container.id = "delayed_video_player_" + this.num
+        container.id = this.player_name
         container.classList.add("video_player_container")
         var src = this.path + this.video_name
         var video_el = document.createElement('video')
         video_el.setAttribute("data-is-active", "true")
         video_el.src = src
+        video_el.preload = "auto"
         video_el.muted = true
+        video_el.load()
         this.video_el = video_el
         container.appendChild(video_el)
         document.body.appendChild(container)
     }
 
     this.create_countdown_el = function() {
-        var container_el = document.getElementById("delayed_video_player_" + this.num)
+        var container_el = document.getElementById(this.player_name)
         var clock_container_el = document.createElement('div')
         clock_container_el.id = "clock_container"
         clock_container_el.setAttribute("data-is-active", false);
@@ -70,7 +72,7 @@ function Delayed_video_player(path, video_name, player_num) {
     }
 
 
-    this.loop_video_after_delay = function() {
+    this.start_video_loop = function() {
         this.video_el.play();
 
         this.video_el.onended = function() {
@@ -123,7 +125,7 @@ function Delayed_video_player(path, video_name, player_num) {
     this.init = function() {
         this.create_video_player();
         this.create_countdown_el();
-        this.loop_video_after_delay();
+        //this.start_playback();
         // this.video_el.play();
 
         //this.set_next_video()

@@ -1,28 +1,32 @@
-function Random_video_player(path, videos) {
+function Random_video_player(path, videos, num) {
     this.path = path;
     this.video_names = videos;
-    this.video_frames = []
+    this.player_name = "random_video_player_" + num
+    this.video_els = []
     this.active_video_el = null;
     this.prev_video_el = null;
 
     this.create_video_player = function() {
         // create video container
         var container = document.createElement('div')
-            container.id = "random_video_player"
+            container.classList.add("video_player_container")
+            container.id = this.player_name
 
         // create an invisible video element for each video
         for(i = 0; i < this.video_names.length; i++) {
             var video_name = this.video_names[i]
             var src = this.path + video_name
-            var video_frame = document.createElement('video')
-                video_frame.id = "video_" + i
-                video_frame.setAttribute("data-is-active", "false")
-                video_frame.src = src
-                video_frame.muted = true
-            container.appendChild(video_frame)
+            var video_el = document.createElement('video')
+                video_el.id = "video_" + i
+                video_el.setAttribute("data-is-active", "false")
+                video_el.src = src
+                video_el.preload = "auto"
+                video_el.muted = true
+            container.appendChild(video_el)
+            video_el.load()
 
             // store reference to the videos
-            this.video_frames.push(video_frame)
+            this.video_els.push(video_el)
         }
         document.body.appendChild(container)
     }
@@ -48,8 +52,8 @@ function Random_video_player(path, videos) {
 
     this.set_next_video = function() {
         this.prev_video_el = this.active_video_el
-        var next_video_index = Math.floor(Math.random() * this.video_frames.length)
-        this.active_video_el = this.video_frames[next_video_index]
+        var next_video_index = Math.floor(Math.random() * this.video_els.length)
+        this.active_video_el = this.video_els[next_video_index]
         this.active_video_el.setAttribute("data-is-active", true)
     }
 
@@ -59,7 +63,11 @@ function Random_video_player(path, videos) {
             this.prev_video_el.setAttribute("data-is-active", false)
         }
         this.active_video_el.setAttribute("data-is-active", true)
-        this.active_video_el.play();
+        try {
+            this.active_video_el.play();
+        } catch (err) {
+            throw(err)
+        }
     }
 
     this.start_video_loop = function() {
