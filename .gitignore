@@ -3,4 +3,4 @@ public/random_video_player/assets
 *.sublime-project
 *.sublime-workspace
 node_modules/
-DS_Store
+.DS_Store
