@@ -1,0 +1,35 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Untitled</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script type="text/javascript" src="./js/lib/socket.io.min.js"></script>
+    </head>
+    <body>
+    <img id="image">
+  
+
+    <script>
+        // Connecting socket.io to localhost 
+        const socket = io.connect('http://localhost:3000');
+
+        // listening to the image event in index.js
+        socket.on('image', (data)=>{
+           console.log('data', data);
+
+         // Now we are getting the image and 
+         // displaying it via img tag
+          const imageEle = document.getElementById('image');
+
+          // Also we are decoding the base64 encoding 
+          // set in javascript file.
+          imageEle.src = data:image/jpeg;base64,${image};
+    });
+    </script>
+    </body>
+</html>

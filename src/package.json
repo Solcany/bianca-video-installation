@@ -1,0 +1,25 @@
+{
+  "name": "bianca_p5js_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Solcany/bianca_p5js_project.git"
+  },
+  "author": "ms",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Solcany/bianca_p5js_project/issues"
+  },
+  "homepage": "https://github.com/Solcany/bianca_p5js_project#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "opencv": "^7.0.0",
+    "socket.io": "^4.0.1"
+  }
+}
