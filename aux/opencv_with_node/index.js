@@ -34,7 +34,8 @@
 var cv = require('opencv');
 
 try {
-  var camera = new cv.VideoCapture(0);
+  var camera = new cv.VideoCapture(1);
+
   var window = new cv.NamedWindow('Video', 0)
   var first_frame = null;
   var maxArea = 5000;
@@ -97,14 +98,14 @@ try {
 			if(contours.area(i) > maxArea) {
 				is_occupied = true;
 				const { x, y, width, height } = contours.boundingRect(i);
-				im.rectangle([x, y], [x + width, y + height], [0, 255, 0], 3);
+				thresh.rectangle([x, y], [x + width, y + height], [0, 255, 0], 3);
 			} else {
 				is_occupied = false
 			}
 		}	
 		if(is_occupied) { console.log("occupied") } else { console.log("not occupied") }
 
-        window.show(im);
+        window.show(thresh);
       }
       window.blockingWaitKey(0, 100);
     });
