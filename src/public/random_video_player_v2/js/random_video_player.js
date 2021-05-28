@@ -5,6 +5,10 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
     this.prev_video_el = null;
     this.dispatcher = new EventTarget();
 
+    this.set_page_title = function() {
+        document.title = this.player_name
+    }
+
     this.create_video_player = function() {
         // create video container
         var container = document.createElement('div')
@@ -181,6 +185,7 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
 
 
     this.init = function() {
+        this.set_page_title();
         this.create_video_player();
         this.init_camera_stream();
         this.connect_to_controller();

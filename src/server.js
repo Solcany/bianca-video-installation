@@ -1,3 +1,6 @@
+const PORT = 4000
+const PLAYERS = ['public/random_video_player_v2/']
+
 const express = require('express')
 const socket = require('socket.io')
 const Motion_detector = require('./motion_detector.js')
@@ -6,13 +9,16 @@ const app = express();
 const server = app.listen(4000)
 const motion_detector = new Motion_detector()
 
-const random_player_mirror = '/random_player'
-//const delayed_player0_mirror = '/delayed_player0'
-//const delayed_player1_mirror = '/delayed_player1'
 
-app.use(random_player_mirror, express.static('public/random_video_player_v2/'))
-// app.use(delayed_player0_mirror , express.static('public/delayed_video_player/'))
-// app.use(delayed_player1_mirror , express.static('public/delayed_video_player1/'))
+for(i = 0; i < PLAYERS.length; i++) {
+    const mirror = "random_player_" + i
+    const player = PLAYERS[i]
+    app.use("/" + mirror, express.static(player))
+    console.log("serving " + mirror + " at: ")
+    console.log("localhost:" + PORT + "/" + mirror)
+    console.log(" ")
+
+}
 
 var are_players_ready = false
 
@@ -30,7 +36,15 @@ io.on('connection', function(socket) {
     });
 
     socket.on("player_next_video", function(player_detail) {
-        console.log(player_detail.player_name + " is playing: " + player_detail.video_name)
+        let event_name;
+        if (player_detail.event_name == "random") {
+            event_name = "random video"
+        } else if (player_detail.event_name == "scheduled") {
+            event_name = "scheduled video"
+        } else {
+            event_name = " !unknown event! "
+        }
+        console.log(player_detail.player_name + " is playing " +  event_name + ": " + player_detail.video_name)
     });
 
     socket.on("server_start_video_loops", function(detail) {
