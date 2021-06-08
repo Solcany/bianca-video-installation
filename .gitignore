@@ -4,3 +4,5 @@ public/random_video_player/assets
 *.sublime-workspace
 node_modules/
 .DS_Store
+videos/*
+!videos/.gitkeep

@@ -6,7 +6,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     									 _CAM_STREAM_DURATION_,
     									 _DEBUG_, 
     									 _NUM_)
-    player.init()
+    player.init();
     var controller = new Controller(player);
-    controller.init()
+    controller.init();
 });

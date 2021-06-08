@@ -4,6 +4,7 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
     this.active_video_el = null;
     this.prev_video_el = null;
     this.dispatcher = new EventTarget();
+    this.state = "inactive";
 
     this.set_page_title = function() {
         document.title = this.player_name
@@ -81,44 +82,60 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
             throw(err)
         }
     }
- 
+
+    this.stop_active_video = function() {
+        this.active_video_el.setAttribute("data-is-active", false)
+        try {
+            this.active_video_el.pause();
+        } catch (err) {
+            throw(err);
+        }
+    }
+    this.stop_video_loop = function() {
+        this.state ="inactive";
+    }
+
     // randomly select a video from the VIDEOS_NAMES array of filenames
     // or show camera stream.
     // every n milliseconds select a video from VIDEOS_SCHEDULE array,
     // and play it instead of a random video.
     // after the scheduled video is played return to random selection.
     this.init_video_loop = function() {
+        this.state = "active";
+
         const video_schedule_indices = VIDEOS_SCHEDULE.map(function(s) { return VIDEOS_NAMES.indexOf(s) })        
         var loop_start_time = new Date();
         var schedule_counter = 0;
 
         const loop = function() {
-            var current_time = new Date();
-            var time_diff = current_time - loop_start_time;
-            // select a random video most of the time
-            if(time_diff < SCHEDULE_DUE_TIME) {
-                const next_video_index = Math.floor(Math.random() * this.video_els.length)
-                this.set_next_video(next_video_index);
-                if(DEBUG) dispatch_video_event("random", next_video_index)
-            // if time is due select a scheduled video
-            } else {
-                // reset start time
-                loop_start_time = new Date();
-                var next_video_index = schedule_counter % video_schedule_indices.length
-                this.set_next_video(next_video_index);
-                schedule_counter++;
-                if(DEBUG) dispatch_video_event("scheduled", next_video_index)
-            }
-            // play it
-            this.play_next_video();
-            // call the loop after a video or camera stream ends
-            if(this.active_video_el.id == "video_camera_stream") {
-                setTimeout(function() {
-                    loop();
-                }, CAM_STREAM_DURATION)
-            } else {
-                this.active_video_el.onended = function() {
-                    loop();
+            if(this.state == "active") {
+                var current_time = new Date();
+                var time_diff = current_time - loop_start_time;
+                // select a random video most of the time
+                if(time_diff < SCHEDULE_DUE_TIME) {
+                    const next_video_index = Math.floor(Math.random() * this.video_els.length)
+                    this.set_next_video(next_video_index);
+                    if(DEBUG) dispatch_video_event("random", next_video_index)
+                // if time is due select a scheduled video
+                } else {
+                    // reset start time
+                    loop_start_time = new Date();
+                    var next_video_index = schedule_counter % video_schedule_indices.length
+                    this.set_next_video(next_video_index);
+                    schedule_counter++;
+                    if(DEBUG) dispatch_video_event("scheduled", next_video_index)
+                }
+                // play it
+                this.play_next_video();
+                // call the loop after a video or camera stream ends
+                if(this.active_video_el.id == "video_camera_stream") {
+                    setTimeout(function() {
+                        loop();
+                    }, CAM_STREAM_DURATION)
+                } else {
+                    this.active_video_el.onended = function() {
+                        loop();
+                    }
                 }
             }            
         }.bind(this)
@@ -141,14 +158,12 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
             this.dispatcher.dispatchEvent(event);        
         }.bind(this) 
 
-        // initiate the loop
         loop();
     }
 
     this.connect_to_controller = function() {
-        var vid_els = this.video_el || this.video_els
+        var vid_els = this.video_els;
 
-        if(Array.isArray(vid_els)) {
             var ready = 0
             for(i = 0; i < vid_els.length; i++) {
                 var vid = vid_els[i]
@@ -158,19 +173,12 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
             }
             var check_status = function() {
                 if(ready == vid_els.length) {
-                    dispatch_ready_event()
+                    dispatch_ready_event();
                 } else {
                     setTimeout(check_status, 200)
                 }
             }.bind(this)
-
             check_status()
-        } else {
-            var vid = vid_els
-            vid.addEventListener('canplay', function() {
-                 dispatch_ready_event()
-            }.bind(this), { once: true })
-        }
 
         const dispatch_ready_event = function() {
             var event = new CustomEvent("player_is_ready", {
@@ -188,8 +196,8 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
         this.set_page_title();
         this.create_video_player();
         this.init_camera_stream();
-        this.connect_to_controller();
-        this.init_video_loop();
+        //this.connect_to_controller();
+        //this.init_video_loop();
     }
 
     // the player is controlled through Controller object
