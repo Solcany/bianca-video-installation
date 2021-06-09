@@ -1,6 +1,4 @@
-/*
-	Settings for the front end of the video installation
-*/
+// Settings for the front end of the video installation
 
 
 /*
@@ -26,6 +24,6 @@ const _CAM_STREAM_DURATION_ = 10000
 
 // Random player 0 
 const _PLAYER_0_MIRROR_ = '/random_player_' + 0
-const _PLAYER_0_PATH_ = _EXPRESSJS_MIRROR_ + _ASSETS_PATH_
+const _PLAYER_0_PATH_ = _PLAYER_0_MIRROR_ + _ASSETS_PATH_
 
 
