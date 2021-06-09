@@ -7,7 +7,7 @@ function Motion_detector(MIN_AREA=3000,
 						 RESOLUTION=[512, 288],
 						 DELAY=100,
 						 SAMPLES_AMT=20,
-						 OCCUPATION_THRESH=0.8) {
+						 OCCUPATION_THRESH=0.85) {
 	this.camera;
 	this.window;
 	this.occupation = [];

@@ -25,7 +25,7 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
                 video_el.setAttribute("data-is-active", "false")
                 video_el.src = src
                 video_el.preload = "auto"
-                video_el.muted = true
+                video_el.muted = false
             container.appendChild(video_el)
             video_el.load()
 
@@ -197,7 +197,7 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
         this.create_video_player();
         this.init_camera_stream();
         //this.connect_to_controller();
-        //this.init_video_loop();
+        this.init_video_loop();
     }
 
     // the player is controlled through Controller object

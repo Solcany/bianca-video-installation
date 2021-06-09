@@ -1,11 +1,11 @@
 window.addEventListener('DOMContentLoaded', (event) => {
-    var player = new Random_video_player(_RANDOM_PLAYER_PATH_, 
-    									 _RANDOM_PLAYER_VIDEOS_,
+    var player = new Random_video_player(_PLAYER_0_PATH_, 
+    									 _VIDEOS_,
     									 _VIDEOS_SCHEDULE_,
-    									 _SCHEDULE_DUE_TIME_, 
+    								 	 _SCHEDULE_DUE_TIME_, 
     									 _CAM_STREAM_DURATION_,
-    									 _DEBUG_, 
-    									 _NUM_)
+    									 _IS_STREAMING_EVENTS_,
+    									 0)
     player.init();
     var controller = new Controller(player);
     controller.init();

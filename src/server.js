@@ -1,6 +1,7 @@
 const express = require('express')
 const socket = require('socket.io')
 const Motion_detector = require('./motion_detector.js')
+//const settings = require('./settings.js')
 
 const PORT = 4000
 const DELAY = 2000
