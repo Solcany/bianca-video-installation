@@ -1,16 +1,16 @@
 const express = require('express')
 const socket = require('socket.io')
-const Motion_detector = require('./motion_detector.js')
+//const Motion_detector = require('./motion_detector.js')
 //const settings = require('./settings.js')
 
 const PORT = 4000
 const DELAY = 2000
 
-const OCCUPANCE_SAMPLE_TIME = 100;
-const OCCUPANCE_ACTIVATION_PERIOD = 3000;
-const OCCUPANCE_DEACTIVATION_PERIOD = 5000;
-const OCCUPANCE_ACTIVATION_THRESHOLD = 0.85;
-const OCCUPANCE_DEACTIVATION_THRESHOLD = 0.1;
+// const OCCUPANCE_SAMPLE_TIME = 100;
+// const OCCUPANCE_ACTIVATION_PERIOD = 3000;
+// const OCCUPANCE_DEACTIVATION_PERIOD = 5000;
+// const OCCUPANCE_ACTIVATION_THRESHOLD = 0.85;
+// const OCCUPANCE_DEACTIVATION_THRESHOLD = 0.1;
 const PLAYERS = ['public/random_video_player_v2/']
 
 const app = express();
@@ -73,67 +73,71 @@ function broadcast_pause_video_loops() {
 // }
 
 
-function handle_motion_detector() {
-    console.log("…detecting room occupance");
+// function handle_motion_detector() {
+//     console.log("…detecting room occupance");
 
-    var occupance = 0;
+//     var occupance = 0;
     
-    function measure_occupance(period) {
-            var sample = 0;
-            var samples_count = 0;
+//     function measure_occupance(period) {
+//             var sample = 0;
+//             var samples_count = 0;
 
-            var interval = setInterval(function() {
-                if(samples_count < period / OCCUPANCE_SAMPLE_TIME) {
-                    if(motion_detector.is_space_occupied()) {
-                        sample++;
-                    }
-                    samples_count++;
-                } else {
-                    occupance = sample / samples_count;                  
-                    clearInterval(interval);
-                }
-            }, OCCUPANCE_SAMPLE_TIME);
-    }
+//             var interval = setInterval(function() {
+//                 if(samples_count < period / OCCUPANCE_SAMPLE_TIME) {
+//                     if(motion_detector.is_space_occupied()) {
+//                         sample++;
+//                     }
+//                     samples_count++;
+//                 } else {
+//                     occupance = sample / samples_count;                  
+//                     clearInterval(interval);
+//                 }
+//             }, OCCUPANCE_SAMPLE_TIME);
+//     }
 
-    function loop() {
+//     function loop() {
 
-        if(state === "inactive") {
-            measure_occupance(OCCUPANCE_ACTIVATION_PERIOD);
-            console.log("occupance " + occuapnce);
-            if(occupance > OCCUPANCE_ACTIVATION_THRESHOLD) {
-                let seconds = (OCCUPANCE_ACTIVATION_PERIOD / 1000) * occupance;                
-                console.log("…the space has been occupied for " + seconds + " seconds…" + " (occupance: " + occupance + ")");
-                console.log("…starting video loops.")
-                broadcast_start_video_loops();
-                state = "active";
-            }
-            setTimeout(loop, OCCUPANCE_ACTIVATION_PERIOD);
-        } else {
-            measure_occupance(OCCUPANCE_DEACTIVATION_PERIOD);            
-            if(occupance < OCCUPANCE_DEACTIVATION_THRESHOLD) {
-                let seconds = OCCUPANCE_DEACTIVATION_PERIOD / 1000 * (1.0 - occupance);
-                console.log("…the space has been unoccupied for " + seconds + " seconds…" + " (occupance: " + occupance + ")");
-                console.log("…pausing video loops.")
-                broadcast_pause_video_loops();
-                state = "inactive";
-            }
-            setTimeout(loop, OCCUPANCE_DEACTIVATION_PERIOD);                
-        }
-    }
+//         if(state === "inactive") {
+//             measure_occupance(OCCUPANCE_ACTIVATION_PERIOD);
+//             console.log("occupance " + occuapnce);
+//             if(occupance > OCCUPANCE_ACTIVATION_THRESHOLD) {
+//                 let seconds = (OCCUPANCE_ACTIVATION_PERIOD / 1000) * occupance;                
+//                 console.log("…the space has been occupied for " + seconds + " seconds…" + " (occupance: " + occupance + ")");
+//                 console.log("…starting video loops.")
+//                 broadcast_start_video_loops();
+//                 state = "active";
+//             }
+//             setTimeout(loop, OCCUPANCE_ACTIVATION_PERIOD);
+//         } else {
+//             measure_occupance(OCCUPANCE_DEACTIVATION_PERIOD);            
+//             if(occupance < OCCUPANCE_DEACTIVATION_THRESHOLD) {
+//                 let seconds = OCCUPANCE_DEACTIVATION_PERIOD / 1000 * (1.0 - occupance);
+//                 console.log("…the space has been unoccupied for " + seconds + " seconds…" + " (occupance: " + occupance + ")");
+//                 console.log("…pausing video loops.")
+//                 broadcast_pause_video_loops();
+//                 state = "inactive";
+//             }
+//             setTimeout(loop, OCCUPANCE_DEACTIVATION_PERIOD);                
+//         }
+//     }
 
-    loop();
-}
+//     loop();
+// }
 
 
 function handle_client_events(socket) {
     socket.on("start_performance", function(player_detail) {
             console.log("Player: " + player_detail + " started the performance…")
-            console.log("…starting motion detector in 5 seconds…");
-            console.log("…clear the area in front of the camera.");
+            //console.log("…starting motion detector in 5 seconds…");
+            console.log("…starting the performance in 1 seconds…");
+
+            //console.log("…clear the area in front of the camera.");
             setTimeout(() => { 
-                motion_detector.init(); 
-                console.log("✓ Motion detector started");
-                handle_motion_detector(io);
+                //motion_detector.init(); 
+                console.log("✓ performance started.");
+                broadcast_start_video_loops();
+
+                //handle_motion_detector(io);
 
             }, 1000);        
         });

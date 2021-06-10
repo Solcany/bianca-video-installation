@@ -10,43 +10,43 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
         document.title = this.player_name
     }
 
-    this.create_video_player = function() {
-        // create video container
-        var container = document.createElement('div')
-            container.classList.add("video_player_container")
-            container.id = this.player_name
+    // this.create_video_player = function() {
+    //     // create video container
+    //     var container = document.createElement('div')
+    //         container.classList.add("video_player_container")
+    //         container.id = this.player_name
 
-        // create an invisible video element for each video
-        for(i = 0; i < VIDEOS_NAMES.length; i++) {
-            var video_name = VIDEOS_NAMES[i]
-            var src = PATH + video_name
-            var video_el = document.createElement('video')
-                video_el.id = "video_" + i
-                video_el.setAttribute("data-is-active", "false")
-                video_el.src = src
-                video_el.preload = "auto"
-                video_el.muted = false
-            container.appendChild(video_el)
-            video_el.load()
+    //     // create an invisible video element for each video
+    //     for(i = 0; i < VIDEOS_NAMES.length; i++) {
+    //         var video_name = VIDEOS_NAMES[i]
+    //         var src = PATH + video_name
+    //         var video_el = document.createElement('video')
+    //             video_el.id = "video_" + i
+    //             video_el.setAttribute("data-is-active", "false")
+    //             video_el.src = src
+    //             video_el.preload = "auto"
+    //             video_el.muted = false
+    //         container.appendChild(video_el)
+    //         video_el.load()
 
-            // store reference to the videos
-            this.video_els.push(video_el)
-        }
+    //         // store reference to the videos
+    //         this.video_els.push(video_el)
+    //     }
 
-        // create an invisible video element for the camera feed
-        var camera_video_el = document.createElement('video')
-            // camera feed video element will be the last in the container
-            camera_video_el.id = "video_camera_stream"
-            camera_video_el.setAttribute("data-is-active", "false")
-            camera_video_el.muted = true
-            //camera_video_el.autoplay = true
-            container.appendChild(camera_video_el) 
+    //     // create an invisible video element for the camera feed
+    //     var camera_video_el = document.createElement('video')
+    //         // camera feed video element will be the last in the container
+    //         camera_video_el.id = "video_camera_stream"
+    //         camera_video_el.setAttribute("data-is-active", "false")
+    //         camera_video_el.muted = true
+    //         //camera_video_el.autoplay = true
+    //         container.appendChild(camera_video_el) 
 
-        // store reference to the camera video el
-        this.video_els.push(camera_video_el)        
+    //     // store reference to the camera video el
+    //     this.video_els.push(camera_video_el)        
 
-        document.body.appendChild(container)
-    }
+    //     document.body.appendChild(container)
+    // }
 
     this.init_camera_stream = function() {
         // find camera video el in videos array
