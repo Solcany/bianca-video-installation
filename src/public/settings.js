@@ -12,7 +12,7 @@ const _VIDEOS_ = ['video-0.mp4',
                               'video-3.mp4']
 const _VIDEOS_SCHEDULE_ = ['video-3.mp4', 
 						   'video-0.mp4']  
-const _ASSETS_PATH_ = '/assets/video/'
+const _ASSETS_PATH_ = './../videos/'
 const _SCHEDULE_DUE_TIME_ = 15000
 const _IS_STREAMING_EVENTS_ = true						                              
 const _CAM_STREAM_DURATION_ = 10000
