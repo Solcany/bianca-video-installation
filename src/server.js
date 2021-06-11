@@ -16,7 +16,7 @@ const PLAYERS = ['public/random_video_player_v2/']
 const app = express();
 const server = app.listen(4000)
 var io;
-const motion_detector = new Motion_detector()
+// const motion_detector = new Motion_detector()
 var state = "inactive";
 
 function express_serve_video_player_websites() {
