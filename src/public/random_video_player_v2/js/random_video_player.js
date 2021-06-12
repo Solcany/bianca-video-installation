@@ -2,7 +2,10 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
     this.player_name = "random_video_player_" + NUM    
     this.video_els = []
     this.active_video_el = null;
-    this.prev_video_el = null;
+    this.active_video_current_time = 0;
+    this.active_video_duration = 0;
+
+    this.inactive_video_el = null;
     this.dispatcher = new EventTarget();
     this.state = "inactive";
 
@@ -48,6 +51,79 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
     //     document.body.appendChild(container)
     // }
 
+    this.create_video_player = function() {
+        // create video container
+        var container = document.createElement('div')
+            container.classList.add("video_player_container")
+            container.id = this.player_name
+
+        var video_els = [];
+        for(let i = 0; i < 2; i++) {
+            var video_el = document.createElement('video');
+                video_el.id = "video_" + i;
+                video_el.setAttribute("data-is-active", "false");
+                video_el.preload = "auto";
+                video_el.controls = true;
+                video_el.muted = false;
+                video_els.push(video_el);
+                container.appendChild(video_el)
+        }
+        this.active_video_el = video_els[0];
+        this.inactive_video_el = video_els[1];
+
+        // create an invisible video element for each video
+        // for(i = 0; i < VIDEOS_NAMES.length; i++) {
+        //     var video_name = VIDEOS_NAMES[i]
+        //     var src = PATH + video_name
+        //     var video_el = document.createElement('video')
+        //         video_el.id = "video_" + i
+        //         video_el.setAttribute("data-is-active", "false")
+        //         video_el.src = src
+        //         video_el.preload = "auto"
+        //         video_el.muted = false
+        //     container.appendChild(video_el)
+        //     video_el.load()
+
+            // store reference to the videos
+            // this.video_els.push(video_el)
+        //}
+
+        // create an invisible video element for the camera feed
+        //var camera_video_el = document.createElement('video')
+            // camera feed video element will be the last in the container
+            // camera_video_el.id = "video_camera_stream"
+            // camera_video_el.setAttribute("data-is-active", "false")
+            // camera_video_el.muted = true
+            //camera_video_el.autoplay = true
+            //container.appendChild(camera_video_el) 
+
+        // store reference to the camera video el
+        //this.video_els.push(camera_video_el)      
+        document.body.appendChild(container)
+    }
+
+    this.create_fullscreen_button = function() {
+        function handleClick(button) {
+            document.documentElement.requestFullscreen();
+            button.classList.add("hidden");
+        }
+        var container = document.createElement('div')
+            container.classList.add("button_container")
+        var button = document.createElement('button');
+            button.type = "button";
+            button.innerHTML = "Fullscreen";
+            button.onclick = function() { handleClick(button) };
+        container.appendChild(button);
+        document.body.appendChild(container)
+
+        document.documentElement.addEventListener('fullscreenchange', function(event) {
+          if (!document.fullscreenElement) {
+            button.classList.remove("hidden");
+          }
+        });
+    }
+
+
     this.init_camera_stream = function() {
         // find camera video el in videos array
         const video_camera_stream_el = this.video_els.find(v => v.id == "video_camera_stream")
@@ -65,17 +141,27 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
     }
 
     this.set_next_video = function(next_video_index) {
-        this.prev_video_el = this.active_video_el
-        this.active_video_el = this.video_els[next_video_index]
+        this.inactive_video_el.src = PATH + VIDEOS_NAMES[next_video_index];
+        //     this.prev_video_el.setAttribute("data-is-active", false)
+        //this.active_video_el.load();
+        //this.prev_video_el = this.active_video_el
+        //this.active_video_el = this.video_els[next_video_index]
     }
 
     this.play_next_video = function() {
-        // hide the previous video
-        if(this.prev_video_el) {
-            this.prev_video_el.setAttribute("data-is-active", false)
-        }
-        // show the next one
-        this.active_video_el.setAttribute("data-is-active", true)
+        // switch the active video with the inactive
+        let active = this.active_video_el;  
+        let inactive = this.inactive_video_el;
+        this.inactive_video_el = active;
+        this.active_video_el = inactive;
+
+        this.inactive_video_el.setAttribute("data-is-active", false);
+        this.active_video_el.setAttribute("data-is-active", true);
+
+        // set url of the next (currently inactive) video
+        const next_video_index = Math.floor(Math.random() * VIDEOS_NAMES.length)
+        this.set_next_video(next_video_index);  
+
         try {
             this.active_video_el.play();
         } catch (err) {
@@ -100,45 +186,69 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
     // every n milliseconds select a video from VIDEOS_SCHEDULE array,
     // and play it instead of a random video.
     // after the scheduled video is played return to random selection.
+    // this.init_video_loop = function() {
+    //     this.state = "active";
+
+    //     const video_schedule_indices = VIDEOS_SCHEDULE.map(function(s) { return VIDEOS_NAMES.indexOf(s) })        
+    //     var loop_start_time = new Date();
+    //     var schedule_counter = 0;
+
+    //     const loop = function() {
+    //         if(this.state == "active") {
+    //             var current_time = new Date();
+    //             var time_diff = current_time - loop_start_time;
+    //             // select a random video most of the time
+    //             if(time_diff < SCHEDULE_DUE_TIME) {
+    //                 const next_video_index = Math.floor(Math.random() * this.video_els.length)
+    //                 this.set_next_video(next_video_index);
+    //                 if(DEBUG) dispatch_video_event("random", next_video_index)
+    //             // if time is due select a scheduled video
+    //             } else {
+    //                 // reset start time
+    //                 loop_start_time = new Date();
+    //                 var next_video_index = schedule_counter % video_schedule_indices.length
+    //                 this.set_next_video(next_video_index);
+    //                 schedule_counter++;
+    //                 if(DEBUG) dispatch_video_event("scheduled", next_video_index)
+    //             }
+    //             // play it
+    //             this.play_next_video();
+    //             // call the loop after a video or camera stream ends
+    //             if(this.active_video_el.id == "video_camera_stream") {
+    //                 setTimeout(function() {
+    //                     loop();
+    //                 }, CAM_STREAM_DURATION)
+    //             } else {
+    //                 this.active_video_el.onended = function() {
+    //                     loop();
+    //                 }
+    //             }
+    //         }            
+    //     }.bind(this)
+
+    //     const dispatch_video_event = function(event_name, video_index) {
+    //         var video_name
+
+    //         if(video_index == VIDEOS_NAMES.length) {
+    //             video_name = "camera_stream"
+    //         } else {
+    //             video_name = VIDEOS_NAMES[video_index]                
+    //         }
+    //         const event = new CustomEvent("player_next_video", {
+    //           detail: {
+    //             player_name: this.player_name,
+    //             video_name: video_name,
+    //             event_name: event_name
+    //           }
+    //         });
+    //         this.dispatcher.dispatchEvent(event);        
+    //     }.bind(this) 
+
+    //     loop();
+    // }
+
+
     this.init_video_loop = function() {
-        this.state = "active";
-
-        const video_schedule_indices = VIDEOS_SCHEDULE.map(function(s) { return VIDEOS_NAMES.indexOf(s) })        
-        var loop_start_time = new Date();
-        var schedule_counter = 0;
-
-        const loop = function() {
-            if(this.state == "active") {
-                var current_time = new Date();
-                var time_diff = current_time - loop_start_time;
-                // select a random video most of the time
-                if(time_diff < SCHEDULE_DUE_TIME) {
-                    const next_video_index = Math.floor(Math.random() * this.video_els.length)
-                    this.set_next_video(next_video_index);
-                    if(DEBUG) dispatch_video_event("random", next_video_index)
-                // if time is due select a scheduled video
-                } else {
-                    // reset start time
-                    loop_start_time = new Date();
-                    var next_video_index = schedule_counter % video_schedule_indices.length
-                    this.set_next_video(next_video_index);
-                    schedule_counter++;
-                    if(DEBUG) dispatch_video_event("scheduled", next_video_index)
-                }
-                // play it
-                this.play_next_video();
-                // call the loop after a video or camera stream ends
-                if(this.active_video_el.id == "video_camera_stream") {
-                    setTimeout(function() {
-                        loop();
-                    }, CAM_STREAM_DURATION)
-                } else {
-                    this.active_video_el.onended = function() {
-                        loop();
-                    }
-                }
-            }            
-        }.bind(this)
 
         const dispatch_video_event = function(event_name, video_index) {
             var video_name
@@ -156,10 +266,75 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
               }
             });
             this.dispatcher.dispatchEvent(event);        
-        }.bind(this) 
+        }.bind(this);
+
+
+        this.state = "active";
+
+        const video_schedule_indices = VIDEOS_SCHEDULE.map(function(s) { return VIDEOS_NAMES.indexOf(s) })        
+        var loop_start_time = new Date();
+        var schedule_counter = 0;
+
+        // set the first video
+        const first_video_index = Math.floor(Math.random() * VIDEOS_NAMES.length)        
+        this.inactive_video_el.src = PATH + VIDEOS_NAMES[first_video_index];
+
+        const loop = function() {
+
+            if(this.state == "active") {
+                var current_time = new Date();
+                var time_diff = current_time - loop_start_time;
+
+                // switch the active video with the inactive
+                let active = this.active_video_el;  
+                let inactive = this.inactive_video_el;                
+                this.inactive_video_el = active;
+                this.active_video_el = inactive;
+              
+                this.inactive_video_el.setAttribute("data-is-active", false);
+                this.active_video_el.setAttribute("data-is-active", true);
+
+                // select a random video most of the time
+                if(time_diff < SCHEDULE_DUE_TIME) {
+                   // set url of the next (currently inactive) video
+                    const next_video_index = Math.floor(Math.random() * VIDEOS_NAMES.length)
+                    this.inactive_video_el.src = PATH + VIDEOS_NAMES[next_video_index];
+                    if(DEBUG) dispatch_video_event("random", next_video_index);
+                // if time is due select a scheduled video
+                } else {
+                    // reset start time
+                    loop_start_time = new Date();
+                    var next_video_index = schedule_counter % video_schedule_indices.length
+                    this.inactive_video_el.src = PATH + VIDEOS_NAMES[next_video_index];                    // schedule_counter++;
+                     if(DEBUG) dispatch_video_event("scheduled", next_video_index);
+                }
+        
+                try {
+                    this.active_video_el.play();
+                } catch (err) {
+                    throw(err)
+                }                
+                // play it
+                // call the loop after a video or camera stream ends
+                // if(this.active_video_el.id == "video_camera_stream") {
+                //     setTimeout(function() {
+                //         loop();
+                //     }, CAM_STREAM_DURATION)
+                // } else {
+
+                this.active_video_el.onended = function() { 
+                    loop();
+                }.bind(this);
+                //}
+            }   
+        }.bind(this);
 
         loop();
+
+
     }
+
+
 
     this.connect_to_controller = function() {
         var vid_els = this.video_els;
@@ -193,11 +368,16 @@ function Random_video_player(PATH, VIDEOS_NAMES, VIDEOS_SCHEDULE, SCHEDULE_DUE_T
 
 
     this.init = function() {
+        this.create_fullscreen_button();
+        // document.onclick = function (argument) {
+        //     console.log("click");
+        //     document.documentElement.requestFullscreen();
+        // }        
         this.set_page_title();
         this.create_video_player();
-        this.init_camera_stream();
+        //this.init_camera_stream();
         //this.connect_to_controller();
-        this.init_video_loop();
+        //this.init_video_loop();
     }
 
     // the player is controlled through Controller object

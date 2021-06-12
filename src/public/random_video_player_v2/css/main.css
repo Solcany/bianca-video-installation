@@ -1,4 +1,5 @@
 body {
+  position: relative;
   padding: 0;
   margin: 0;
 }
@@ -8,18 +9,48 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-color: black;
 }
 .video_player_container video {
   position: absolute;
   object-fit: cover;
-  min-width: 100%;
-  min-height: 100%;
+  width: 100%;
+  height: 100%;
 }
 .video_player_container video[data-is-active=false] {
   display: none;
 }
 .video_player_container video[data-is-active=true] {
   display: block;
+}
+
+.button_container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+}
+.button_container button {
+  z-index: 999;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  position: absolute;
+  outline: none;
+  color: white;
+  background-color: black;
+  border: 1px solid white;
+  width: 150px;
+  height: 150px;
+  font-family: monospace;
+  font-size: 16px;
+  text-align: center;
+}
+.button_container button.hidden {
+  display: none;
+}
+.button_container button:hover {
+  cursor: nwse-resize;
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
 /*# sourceMappingURL=main.css.map */

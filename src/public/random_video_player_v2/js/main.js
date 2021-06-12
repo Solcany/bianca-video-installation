@@ -1,5 +1,5 @@
 window.addEventListener('DOMContentLoaded', (event) => {
-    var player = new Random_video_player(_PLAYER_0_PATH_, 
+    var player = new Random_video_player(_ASSETS_PATH_, 
     									 _VIDEOS_,
     									 _VIDEOS_SCHEDULE_,
     								 	 _SCHEDULE_DUE_TIME_, 
